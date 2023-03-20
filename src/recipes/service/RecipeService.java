@@ -52,42 +52,15 @@ public class RecipeService {
         recipe.setDate(LocalDateTime.now());
         return recipe.toRecipeDto(recipe);
     }
-    public Recipe findByIdEntity(int id){
-       return recipeRepo.findById(id).get();
+
+    public Recipe findByIdEntity(int id) {
+        return recipeRepo.findById(id).get();
     }
 
     public void update(RecipeDto recipe, int id) {
-        Recipe recipeNew = recipeRepo.findById(id).get();
-        recipeNew.setName(recipe.getName());
-        recipeNew.setCategory(recipe.getCategory());
-
-        for (int i = 0; i < recipeNew.getIngredients().size(); i++) {
-            recipeNew.getIngredients().get(i).setRecipe(null);
-        }
-        for (int i = 0; i < recipeNew.getDirections().size(); i++) {
-            recipeNew.getDirections().get(i).setRecipe(null);
-        }
-
-        List<Direction> directions = new ArrayList<>();
-        List<Ingredient> ingredients = new ArrayList<>();
-        for (int i = 0; i < recipe.getDirections().size(); i++) {
-            Direction direction = new Direction();
-            direction.setStr(recipe.getDirections().get(i));
-            direction.setRecipe(recipeNew);
-            directions.add(direction);
-        }
-        recipeNew.setDirections(directions);
-        for (int i = 0; i < recipe.getIngredients().size(); i++) {
-            Ingredient ingredient = new Ingredient();
-            ingredient.setStr(recipe.getIngredients().get(i));
-            ingredient.setRecipe(recipeNew);
-            ingredients.add(ingredient);
-        }
-        recipeNew.setIngredients(ingredients);
-
-
-        recipeNew.setDescription(recipe.getDescription());
-        recipeNew.setDate(recipe.getDate());
+        Recipe recipeNew = recipe.toRecipe(recipe);
+        recipeNew.setId(id);
+        recipeNew.setDate(LocalDateTime.now());
         recipeRepo.save(recipeNew);
     }
 
